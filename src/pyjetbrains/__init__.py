@@ -1,0 +1,1 @@
+from .pyjetbrains import open, IDE
