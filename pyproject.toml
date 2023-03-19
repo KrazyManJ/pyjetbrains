@@ -17,6 +17,9 @@ classifiers = [
     "Operating System :: OS Independent",
     "Typing :: Typed"
 ]
+dependencies = [
+    "winapps"
+]
 
 [project.urls]
 "Repository" = "https://github.com/KrazyManJ/name"
