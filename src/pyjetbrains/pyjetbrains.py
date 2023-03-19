@@ -60,7 +60,7 @@ def open(ide, *paths, line=None, column=None):
     """
     Open an arbitrary file or folder in IDE, optionally specifying where to put the caret after opening.
 
-    When you specify the path to a file, IDE opens it in the LightEdit mode, unless it belongs to a project that is already open or there is special logic to automatically open or create a project (for example, in case of Maven or Gradle files). If you specify a directory with an existing project, PyCharm opens this project. If you open a directory that is not a part of a project, PyCharm adds the .idea directory to it, making it a project.
+    When you specify the path to a file, IDE opens it in the LightEdit mode, unless it belongs to a project that is already open or there is special logic to automatically open or create a project (for example, in case of Maven or Gradle files). If you specify a directory with an existing project, IDE opens this project. If you open a directory that is not a part of a project, IDE adds the .idea directory to it, making it a project.
 
     :param ide: IDE you want to open files with
     :param paths: Paths to files or folders you want to open
@@ -79,6 +79,14 @@ def open(ide, *paths, line=None, column=None):
 
 
 def compare(ide, path1, path2, path3=None):
+    """
+    Open the diff viewer to compare two or three files from the command line. For example, you can compare the current version of a file with its backup, or your local copy of a file with its copy from the remote repository or its copy from another branch.
+
+    :param ide: IDE you want to open files with
+    :param path1: First path of file of comparison
+    :param path2: Second path of file of comparison
+    :param path3: Third optional path of file of comparison
+    """
     if not is_installed(ide):
         raise IDENotFoundError(f"IDE '{ide.name}' is not installed on this device.")
     for order,path in [("First",path1),("Second",path2)]:
