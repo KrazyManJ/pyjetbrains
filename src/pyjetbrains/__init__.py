@@ -1,1 +1,1 @@
-from .pyjetbrains import open, IDE, is_installed, compare
+from .pyjetbrains import open, IDE, is_installed, compare_files, format_files

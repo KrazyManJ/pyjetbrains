@@ -70,6 +70,9 @@ def open(ide, *paths, line=None, column=None):
     """
     if not is_installed(ide):
         raise IDENotFoundError(f"IDE '{ide.name}' is not installed on this device.")
+    for path in paths:
+        if not isinstance(path, str):
+            raise ValueError(f"Expected str, got {type(path)} with value {path}")
     cmd = [ide.value.exec_path()]
     if line is not None and isinstance(line, int):
         cmd += ["--line", str(line)]
@@ -78,7 +81,7 @@ def open(ide, *paths, line=None, column=None):
     subprocess.Popen(cmd + [*paths], creationflags=subprocess.CREATE_NO_WINDOW)
 
 
-def compare(ide, path1, path2, path3=None):
+def compare_files(ide, path1, path2, path3=None):
     """
     Open the diff viewer to compare two or three files from the command line. For example, you can compare the current version of a file with its backup, or your local copy of a file with its copy from the remote repository or its copy from another branch.
 
@@ -89,10 +92,34 @@ def compare(ide, path1, path2, path3=None):
     """
     if not is_installed(ide):
         raise IDENotFoundError(f"IDE '{ide.name}' is not installed on this device.")
-    for order,path in [("First",path1),("Second",path2)]:
+    for order, path in [("First", path1), ("Second", path2)]:
         if not os.path.isfile(path) or not os.path.exists(path):
             raise ValueError(f"{order} path is incorrect or does not exist!")
     cmd = [ide.value.exec_path(), "diff", path1, path2]
     if path3 is not None and os.path.isfile(path3) and os.path.exists(path3):
         cmd += [path3]
     subprocess.Popen(cmd, creationflags=subprocess.CREATE_NO_WINDOW)
+
+
+def format_files(ide, *paths, mask=None, recursive=None):
+    """
+    JetBrains IDE can format your code according to the configured code style settings. You can also apply your code style formatting to the specified files from the command line.
+
+    The pyjetbrains launches an instance of IDE in the background and applies the formatting. It will not work if another instance of specific IDE is already running. In this case, you can perform code style formatting from the running instance. Use the pyjetbrains formatter for automated regular maintenance of a large codebase with many contributors to ensure a consistent coding style.
+
+    :param ide: IDE you want to format files with
+    :param paths: Paths to files or whole folders you want to format
+    :param mask: Specify a comma-separated list of file masks that define the files to be processed. You can use the * (any string) and ? (any single character) wildcards.
+    :param recursive: Process specified directories recursively.
+    """
+    if not is_installed(ide):
+        raise IDENotFoundError(f"IDE '{ide.name}' is not installed on this device.")
+    for path in paths:
+        if not isinstance(path, str):
+            raise ValueError(f"Expected str, got {type(path)} with value {path}")
+    cmd = [ide.value.exec_path(), "format"]
+    if mask is not None and isinstance(mask, str):
+        cmd += ["-m", mask]
+    if recursive is not None and isinstance(recursive, bool) and recursive:
+        cmd += ["-r"]
+    subprocess.Popen(cmd + [*paths], creationflags=subprocess.CREATE_NO_WINDOW)
