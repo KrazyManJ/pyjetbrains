@@ -12,7 +12,7 @@ class IDEInfo:
     def is_installed(self):
         return len(list(winapps.search_installed(self.folderName))) > 0
 
-    def path(self):
+    def exec_path(self):
         if not self.is_installed():
             return None
         binFolder = os.path.join(next(winapps.search_installed(self.folderName)).install_location, "bin")
@@ -70,9 +70,21 @@ def open(ide, *paths, line=None, column=None):
     """
     if not is_installed(ide):
         raise IDENotFoundError(f"IDE '{ide.name}' is not installed on this device.")
-    cmd = [ide.value.path()]
+    cmd = [ide.value.exec_path()]
     if line is not None and isinstance(line, int):
         cmd += ["--line", str(line)]
     if column is not None and isinstance(column, int):
         cmd += ["--column", str(column)]
     subprocess.Popen(cmd + [*paths], creationflags=subprocess.CREATE_NO_WINDOW)
+
+
+def compare(ide, path1, path2, path3=None):
+    if not is_installed(ide):
+        raise IDENotFoundError(f"IDE '{ide.name}' is not installed on this device.")
+    for order,path in [("First",path1),("Second",path2)]:
+        if not os.path.isfile(path) or not os.path.exists(path):
+            raise ValueError(f"{order} path is incorrect or does not exist!")
+    cmd = [ide.value.exec_path(), "diff", path1, path2]
+    if path3 is not None and os.path.isfile(path3) and os.path.exists(path3):
+        cmd += [path3]
+    subprocess.Popen(cmd, creationflags=subprocess.CREATE_NO_WINDOW)

@@ -1,6 +1,7 @@
 from enum import Enum
 from os import PathLike
 
+PATH = str | bytes | PathLike
 
 class IDE(Enum):
     PYCHARM = ...
@@ -13,7 +14,10 @@ class IDE(Enum):
     RUBYMINE = ...
 
 
-def open(ide: IDE, *paths: str | bytes | PathLike, line: int | None = ..., column: int | None = ...) -> None: ...
-
-
 def is_installed(ide: IDE) -> bool: ...
+
+
+def open(ide: IDE, *paths: PATH, line: int | None = ..., column: int | None = ...) -> None: ...
+
+
+def compare(ide: IDE, path1: PATH, path2: PATH, path3: PATH | None = ...) -> None: ...
