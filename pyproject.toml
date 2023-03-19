@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 only-packages = true
 
 [project]
-name="@#project_name"
+name="pyjetbrains"
 version="1.0.0"
 authors = [{ name="KrazyManJ" }]
 description="Python package to take control over JetBrains IDEs"
@@ -22,5 +22,5 @@ dependencies = [
 ]
 
 [project.urls]
-"Repository" = "https://github.com/KrazyManJ/name"
-"Bug Tracker" = "https://github.com/KrazyManJ/name/issues"
+"Repository" = "https://github.com/KrazyManJ/pyjetbrains"
+"Bug Tracker" = "https://github.com/KrazyManJ/pyjetbrains/issues"
