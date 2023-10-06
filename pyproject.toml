@@ -6,7 +6,7 @@ only-packages = true
 
 [project]
 name="pyjetbrains"
-version="1.0.0"
+version="1.1.0"
 authors = [{ name="KrazyManJ" }]
 description="Python package to take control over JetBrains IDEs"
 readme = "README.md"
@@ -14,7 +14,6 @@ requires-python = ">=3.7"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
     "Typing :: Typed"
 ]
 dependencies = [
