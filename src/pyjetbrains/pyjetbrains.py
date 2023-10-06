@@ -6,15 +6,21 @@ import winapps
 
 
 class IDEInfo:
-    def __init__(self, folderName):
+    def __init__(self, folderName, cmd):
         self.folderName = folderName
+        self.cmd = cmd
+
+    def __is_toolbox(self):
+        return subprocess.call(f"where.exe {self.cmd}", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0
 
     def is_installed(self):
-        return len(list(winapps.search_installed(self.folderName))) > 0
+        return len(list(winapps.search_installed(self.folderName))) > 0 or self.__is_toolbox()
 
     def exec_path(self):
         if not self.is_installed():
             return None
+        if self.__is_toolbox():
+            return subprocess.run("where.exe pycharm",stderr=subprocess.DEVNULL,stdout=subprocess.PIPE).stdout[:-2]
         binFolder = os.path.join(next(winapps.search_installed(self.folderName)).install_location, "bin")
         return os.path.join(binFolder, [l for l in os.listdir(binFolder) if l.endswith("64.exe")][0])
 
@@ -23,21 +29,21 @@ class IDE(Enum):
     """
     Enumeration of all IDEs to use in all pyjetbrains functions
     """
-    PYCHARM = IDEInfo("PyCharm")
+    PYCHARM = IDEInfo("PyCharm","pycharm")
     """IDE for Python"""
-    INTELLIJ_IDEA = IDEInfo("IntelliJ IDEA")
+    INTELLIJ_IDEA = IDEInfo("IntelliJ IDEA","idea")
     """IDE for Java"""
-    PHPSTORM = IDEInfo("PhpStorm")
+    PHPSTORM = IDEInfo("PhpStorm","phpstorm")
     """IDE for PHP"""
-    RIDER = IDEInfo("JetBrains Rider")
+    RIDER = IDEInfo("JetBrains Rider","rider")
     """IDE for C#"""
-    WEBSTORM = IDEInfo("WebStorm")
+    WEBSTORM = IDEInfo("WebStorm","webstorm")
     """IDE for HTML, CSS and JS"""
-    CLION = IDEInfo("CLion")
+    CLION = IDEInfo("CLion","clion")
     """IDE for C and C++"""
-    GOLANG = IDEInfo("GoLang")
+    GOLANG = IDEInfo("GoLang","golang")
     """IDE for GoLang"""
-    RUBYMINE = IDEInfo("RubyMine")
+    RUBYMINE = IDEInfo("RubyMine","rubymine")
     """IDE for Ruby"""
 
 
