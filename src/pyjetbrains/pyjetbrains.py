@@ -1,5 +1,5 @@
 import os.path
-import subprocess
+from subprocess import run as processrun, call as processcall, DEVNULL, CREATE_NO_WINDOW, PIPE
 from enum import Enum
 
 import winapps
@@ -11,7 +11,7 @@ class IDEInfo:
         self.cmd = cmd
 
     def __is_toolbox(self):
-        return subprocess.call(f"where.exe {self.cmd}", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0
+        return processcall(f"where.exe {self.cmd}", stdout=DEVNULL, stderr=DEVNULL, creationflags=CREATE_NO_WINDOW) == 0
 
     def is_installed(self):
         return len(list(winapps.search_installed(self.folderName))) > 0 or self.__is_toolbox()
@@ -20,7 +20,7 @@ class IDEInfo:
         if not self.is_installed():
             return None
         if self.__is_toolbox():
-            return subprocess.run("where.exe pycharm",stderr=subprocess.DEVNULL,stdout=subprocess.PIPE).stdout[:-2]
+            return processrun("where.exe pycharm",stderr=DEVNULL,stdout=PIPE, creationflags=CREATE_NO_WINDOW).stdout.decode("utf-8")[:-2]
         binFolder = os.path.join(next(winapps.search_installed(self.folderName)).install_location, "bin")
         return os.path.join(binFolder, [l for l in os.listdir(binFolder) if l.endswith("64.exe")][0])
 
@@ -84,7 +84,7 @@ def open(ide, *paths, line=None, column=None):
         cmd += ["--line", str(line)]
     if column is not None and isinstance(column, int):
         cmd += ["--column", str(column)]
-    subprocess.Popen(cmd + [*paths], creationflags=subprocess.CREATE_NO_WINDOW)
+    processrun(cmd + [*paths], creationflags=CREATE_NO_WINDOW)
 
 
 def compare_files(ide, path1, path2, path3=None):
@@ -104,7 +104,7 @@ def compare_files(ide, path1, path2, path3=None):
     cmd = [ide.value.exec_path(), "diff", path1, path2]
     if path3 is not None and os.path.isfile(path3) and os.path.exists(path3):
         cmd += [path3]
-    subprocess.Popen(cmd, creationflags=subprocess.CREATE_NO_WINDOW)
+    processrun(cmd, creationflags=CREATE_NO_WINDOW)
 
 
 def format_files(ide, *paths, mask=None, recursive=None):
@@ -128,4 +128,4 @@ def format_files(ide, *paths, mask=None, recursive=None):
         cmd += ["-m", mask]
     if recursive is not None and isinstance(recursive, bool) and recursive:
         cmd += ["-r"]
-    subprocess.Popen(cmd + [*paths], creationflags=subprocess.CREATE_NO_WINDOW)
+    processrun(cmd + [*paths], stdout=DEVNULL, stderr=DEVNULL, creationflags=CREATE_NO_WINDOW)
