@@ -20,7 +20,7 @@ class IDEInfo:
         if not self.is_installed():
             return None
         if self.__is_toolbox():
-            return processrun("where.exe pycharm", shell=True, stderr=DEVNULL, stdout=PIPE, creationflags=CREATE_NO_WINDOW).stdout.decode("utf-8")[:-2]
+            return processrun(f"where.exe {self.cmd}", shell=True, stderr=DEVNULL, stdout=PIPE, creationflags=CREATE_NO_WINDOW).stdout.decode("utf-8")[:-2]
         binFolder = os.path.join(next(winapps.search_installed(self.folderName)).install_location, "bin")
         return os.path.join(binFolder, [l for l in os.listdir(binFolder) if l.endswith("64.exe")][0])
 
